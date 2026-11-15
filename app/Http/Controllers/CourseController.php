@@ -7,6 +7,7 @@ use App\Models\Course;
 
 class CourseController extends Controller
 {
+
  public function index(Request $request)
 {
     $search = $request->input('search');
@@ -113,3 +114,4 @@ public function destroy($id)
 }
 
 }
+

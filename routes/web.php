@@ -23,7 +23,15 @@ Route::middleware('auth')->group(function () {
 });
 
 // 👇 আপনার আগের কোর্স এবং লেসনের রুটগুলো এখানে ফিরিয়ে আনুন
-Route::resource('courses', CourseController::class);
+
+// 👇 শুধু কোর্সের create, store, edit, update, delete-এ লগইন লাগবে
+Route::middleware('auth')->group(function () {
+    Route::resource('courses', CourseController::class)->except(['index', 'show']);
+});
+
+// 👇 কোর্স দেখা (index, show) সবার জন্য উন্মুক্ত থাকবে
+Route::resource('courses', CourseController::class)->only(['index', 'show']);
+
 Route::get('courses/{course}/lessons/create', [LessonController::class, 'create'])->name('lessons.create');
 Route::post('courses/{course}/lessons', [LessonController::class, 'store'])->name('lessons.store');
 
