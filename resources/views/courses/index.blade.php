@@ -21,30 +21,42 @@
 <!-- সার্চ ফর্ম শেষ -->
 
 @forelse ($courses as $course)
-    <!-- 👇 ছবি দেখানোর কোড -->
+    <!-- ছবি দেখানোর কোড -->
     @if($course->image)
         <div style="margin-bottom: 10px;">
-            <img src="{{ asset($course->image) }}">
-
+            <img src="{{ asset($course->image) }}" width="150">
         </div>
     @endif
 
     <h2>{{ $course->title }}</h2>
     <a href="/courses/{{ $course->id }}">View Details</a>
-    <!-- বাকি কোড আগের মতোই থাকবে... -->
+    
+    <!-- 👇 এডিট বাটনও শুধু অ্যাডমিন দেখবে (ঐচ্ছিক, তবে ভালো) -->
 
-    <a href="/courses/{{ $course->id }}/edit">Edit Course</a>
-    <form action="/courses/{{ $course->id }}" method="POST"
-        onsubmit = "return confirm('Are you sure to delete this course?')">
+@can('manage-courses')
+    <div style="margin-top: 10px; margin-bottom: 10px;">
+        <!-- এডিট বাটন -->
+        <a href="/courses/{{ $course->id }}/edit" style="margin-right: 10px;">Edit Course</a>
 
-    @csrf
-    @method('DELETE')
-
-    <button type="submit">Delete Course</button>
-</form>
+        <!-- ডিলিট বাটন (শুধু অ্যাডমিন) -->
+        @can('is-admin')
+            <form action="/courses/{{ $course->id }}" method="POST" 
+                  onsubmit="return confirm('Are you sure to delete this course?')" 
+                  style="display: inline-block;">
+                @csrf
+                @method('DELETE')
+                <button type="submit">Delete Course</button>
+            </form>
+        @endcan
+    </div>
+@endcan
     <p>{{ $course->description }}</p>
+    <hr>
 @empty
     <p>এখনো কোনো Course যোগ করা হয়নি।</p>
-
 @endforelse
-            {{ $courses->links() }}
+
+<!-- 👇 পেজিনেশন লিঙ্ক (লুপের বাইরে) -->
+<div style="margin-top: 20px;">
+    {{ $courses->links() }}
+</div>

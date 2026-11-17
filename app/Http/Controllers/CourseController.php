@@ -107,11 +107,15 @@ public function update(Request $request, Course $course)
 
 public function destroy($id)
 {
-    $course = Course::findOrFail($id);
-    
-    $course->delete();
-    return redirect('/courses');
-}
+    // 👇 অ্যাডমিন না হলে 403 Forbidden এরর দেখাবে
+    if (!auth()->user()->can('is-admin')) {
+        abort(403, 'Unauthorized action.');
+    }
 
+    $course = Course::findOrFail($id);
+    $course->delete();
+    
+    return redirect('/courses')->with('success', 'Course deleted successfully.');
+}
 }
 
