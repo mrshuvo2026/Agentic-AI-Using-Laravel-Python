@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Course;
+use App\Http\Resources\CourseResource;
 
 class CourseController extends Controller
 {
@@ -35,6 +36,11 @@ class CourseController extends Controller
         })
         ->paginate(10);
 
+        if ($request->is('api/*')) {
+    // 👇 response()->json এর বদলে CourseResource ব্যবহার করুন
+    return CourseResource::collection($courses); 
+}
+            
     return view('courses.index', compact('courses', 'search', 'sort', 'filter'));
 }
 public function show(Course $course)
